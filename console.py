@@ -122,34 +122,34 @@ class HBNBCommand(cmd.Cmd):
         try:
             if not args:
                 raise SyntaxError()
-            
+
             my_list = args.split()
             obj = eval(f"{my_list[0]}()")
             obj.save()
             print(obj.id)
 
             for word in my_list[1:]:
-                #Replace = with ' '
+                # Replace = with ' '
                 word = word.replace('=', ' ')
 
-                #Split the string into a list
+                # Split the string into a list
                 attributes = word.split()
 
-                #Replace _ with ' '
+                # Replace _ with ' '
                 attributes[0] = attributes[0].replace('_', ' ')
 
                 try:
-                    #Convert the value to the correct type
+                    # Convert the value to the correct type
                     var = eval(attributes[1])
                     attributes[1] = var
-                except:
-                    #If value can't be converted, raise ValueError
-                    raise ValueError()
+                except ValueError as e:
+                    # If value can't be converted, raise ValueError
+                    raise ValueError
 
-                #Set the attribute
+                # Set the attribute
                 setattr(obj, attributes[0], attributes[1])
 
-                #Save the object
+                # Save the object
                 obj.save()
 
                 # Check if attr were added
@@ -163,7 +163,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
 
         except ValueError:
-                print("** value missing **")
+            print("** value missing **")
 
     def help_create(self):
         """ Help information for the create method """
