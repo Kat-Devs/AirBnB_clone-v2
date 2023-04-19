@@ -116,40 +116,54 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         '''
-        Create object of any class
+        Creates a new instance of BaseModel, saves it (to the JSON file)
         '''
-        if not args:
+
+        try:
+            if not args:
+                raise SyntaxError()
+            
+            my_list = args.split()
+            obj = eval(f"{my_list[0]}()")
+            obj.save()
+            print(obj.id)
+
+            for word in my_list[1:]:
+                #Replace = with ' '
+                word = word.replace('=', ' ')
+
+                #Split the string into a list
+                attributes = word.split()
+
+                #Replace _ with ' '
+                attributes[0] = attributes[0].replace('_', ' ')
+
+                try:
+                    #Convert the value to the correct type
+                    var = eval(attributes[1])
+                    attributes[1] = var
+                except:
+                    #If value can't be converted, raise ValueError
+                    raise ValueError()
+
+                #Set the attribute
+                setattr(obj, attributes[0], attributes[1])
+
+                #Save the object
+                obj.save()
+
+                # Check if attr were added
+                if len(my_list) == 1:
+                    print(obj.id)
+
+        except SyntaxError:
             print("** class name missing **")
-            return
-        
-        if ('=' in args and ' ' in args):
-            args = args.partition(' ')
-            class_name = args[0]
-            params = args[2].split(' ')
-            param_dict = {}
 
-            for items in params:
-                key, value = tuple(items.split('='))
-                if value[0] == '"':
-                    value = value.strip('"').replace('_', ' ')
-                else:
-                    try:
-                        value = eval(value)
-                    except (SyntaxError, NameError):
-                        continue
-
-                param_dict[key] = value
-        else:
-            class_name = args
-        
-        if class_name not in HBNBCommand.classes:
+        except NameError:
             print("** class doesn't exist **")
-            return
-        
-        n_instance = HBNBCommand.classes[class_name]()
-        storage.save()
-        print(n_instance.id)
-        storage.save()
+
+        except ValueError:
+                print("** value missing **")
 
     def help_create(self):
         """ Help information for the create method """
