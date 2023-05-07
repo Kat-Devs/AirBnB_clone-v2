@@ -2,12 +2,13 @@
 # Bash script to setup web servers for web_static
 # deployment
 
+# Install Nginx 
 sudo apt-get update
-
 sudo apt-get update
 sudo apt-get -y install nginx
 sudo ufw allow 'Nginx HTTP'
 
+# Create directories and test html file
 sudo mkdir -p /data/
 sudo mkdir -p /data/web_static/
 sudo mkdir -p /data/web_static/releases/
