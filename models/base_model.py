@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, DateTime, String
 from sqlalchemy.ext.declarative import declarative_base
 import uuid
 from datetime import datetime
-from models import storage
+
 
 # Define a base class for all models in our hbnb clone
 Base = declarative_base()
@@ -67,5 +67,6 @@ class BaseModel:
     
     def delete(self):
         """Delete the current instance from the storage"""
+        from models import storage
         storage.delete(self)
 
