@@ -1,6 +1,7 @@
 #!/usr/bin/python3
-"""Database storage engine using SQLAlchemy with a mysql+mysqldb database
-connection.
+"""
+Contains the class DBStorage
+Used to store objects in a database
 """
 
 import os
@@ -13,13 +14,14 @@ from models.review import Review
 from models.user import User
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-name2class = {
+
+name_class = {
+    'User': User,
+    'State': State,
     'Amenity': Amenity,
     'City': City,
     'Place': Place,
-    'State': State,
-    'Review': Review,
-    'User': User
+    'Review': Review
 }
 
 
@@ -45,12 +47,12 @@ class DBStorage:
             self.reload()
         objects = {}
         if type(cls) == str:
-            cls = name2class.get(cls, None)
+            cls = name_class.get(cls, None)
         if cls:
             for obj in self.__session.query(cls):
                 objects[obj.__class__.__name__ + '.' + obj.id] = obj
         else:
-            for cls in name2class.values():
+            for cls in name_class.values():
                 for obj in self.__session.query(cls):
                     objects[obj.__class__.__name__ + '.' + obj.id] = obj
         return objects
@@ -84,8 +86,8 @@ class DBStorage:
     def get(self, cls, id):
         """Retrieve an object"""
         if cls is not None and type(cls) is str and id is not None and\
-           type(id) is str and cls in name2class:
-            cls = name2class[cls]
+           type(id) is str and cls in name_class:
+            cls = name_class[cls]
             result = self.__session.query(cls).filter(cls.id == id).first()
             return result
         else:
@@ -94,10 +96,10 @@ class DBStorage:
     def count(self, cls=None):
         """Count number of objects in storage"""
         total = 0
-        if type(cls) == str and cls in name2class:
-            cls = name2class[cls]
+        if type(cls) == str and cls in name_class:
+            cls = name_class[cls]
             total = self.__session.query(cls).count()
         elif cls is None:
-            for cls in name2class.values():
+            for cls in name_class.values():
                 total += self.__session.query(cls).count()
         return total
